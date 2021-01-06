@@ -25,6 +25,9 @@ void generate_binary_all_numbers(int n) {
 }
 
 int main () {
+	system("chcp 1251<>nul");
+    std::setlocale(LC_ALL, "ru");
+	
 	int n = 0;
 	std::cin >> n;
 	std::cout << '\n';
