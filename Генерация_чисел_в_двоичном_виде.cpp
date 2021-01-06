@@ -1,6 +1,7 @@
 #include <iostream>
 
 void generate_binary_all_numbers(int n) {
+	// Генерируются всевозможные комбинации чисел из цифр 0 и 1 с количеством разрядов равным n
 	static int numbersOfDigit = n;
 	static int array[24];
 	static int topIndex = 0;
