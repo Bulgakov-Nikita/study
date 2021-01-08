@@ -48,7 +48,7 @@ void sorting_by_count(int mas[], int N, int max) {
 
 int main() {
 	setlocale(LC_ALL, "ru");
-	system("chcp 1251>nul");
+	system("cp866>nul");
 	
 	const int max=10;
 	const int size_file=100000;
@@ -67,6 +67,7 @@ int main() {
 	sorting_by_inserts(array_of_date, size_file-1);
 	print_array(array_of_date, size_file-1);
 	cout << "end";
+	
     system("pause>nul");
 	return 0;
 }
