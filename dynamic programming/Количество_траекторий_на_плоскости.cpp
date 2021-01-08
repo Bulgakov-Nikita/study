@@ -18,6 +18,7 @@ void print_2d_array(int **options, int high, int width) {
 }
 
 void numbers_of_patchs(int high, int width) {
+	// можно ходить либо на 1 клетку вниз, либо на 1 вправо
 	int **options = new int *[high+1];
 	options[0] = new int[(high+1)*(width+1)];
 	for (int i = 1; i <= high; i++) {
@@ -39,6 +40,9 @@ void numbers_of_patchs(int high, int width) {
 	
 	print_2d_array(options, high+1, width+1);
 	std::cout << '\n' << "Value in the desired cell: " << options[high][width];
+	
+	delete[] options[0];
+	delete[] options;
 }
 
 int main() {

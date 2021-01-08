@@ -48,7 +48,7 @@ void sorting_by_count(int mas[], int N, int max) {
 
 int main() {
 	setlocale(LC_ALL, "ru");
-	system("cp866>nul");
+	system("chcp 1251>nul");
 	
 	const int max=10;
 	const int size_file=100000;
