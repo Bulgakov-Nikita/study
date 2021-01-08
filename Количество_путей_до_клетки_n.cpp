@@ -13,7 +13,7 @@ void numbers_of_patchs(int n) {
 
 int main() {
 	int n;
-	std::cout << "Ånter the number of cells: ";
+	std::cout << "Enter the number of cells: ";
 	std::cin >> n;
 	
 	numbers_of_patchs(n);
