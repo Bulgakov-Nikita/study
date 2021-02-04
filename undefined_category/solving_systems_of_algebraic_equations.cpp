@@ -31,7 +31,7 @@ void print_2d_vector(std::vector<std::vector<double>> vector) {
 void print_2d_vector_and_free_members(std::vector<std::vector<double>> vector, std::vector<double> free_members) {
 	for (unsigned int i = 0; i < vector.size(); i++) {
 		for (unsigned int j = 0; j < vector.size(); j++) {
-			std::cout.width(6);
+			std::cout.width(4);
 			std::cout << rounding_to_2_decimal_places(vector[i][j]) << " ";
 		}
 		std::cout.width(4);
