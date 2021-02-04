@@ -147,7 +147,7 @@ int main() {
 	std::cin >> matrix_size;
 
 	std::vector<std::vector<double>> coefficients_matrix(matrix_size, std::vector<double>(matrix_size));
-	std::cout << "Enter the matrix of coefficients for unknowns: ";
+	std::cout << "Enter the matrix of coefficients for unknowns: \n";
 	enter_coefficients(coefficients_matrix);
 
 	std::vector<double> free_members(matrix_size);
