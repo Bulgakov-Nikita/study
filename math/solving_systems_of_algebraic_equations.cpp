@@ -1,19 +1,10 @@
 #include <iostream>
 #include <vector>
 
-double rounding_to_2_decimal_places(double number) {
-	if (number >= 0) {
-		return double(int((number + 0.005) * 100)) / 100.;
-	}
-	else {
-		return double(int((number - 0.005) * 100)) / 100.;
-	}
-}
-
 void print_vector(std::vector<double> vector) {
 	for (int i = 0; i < vector.size(); i++) {
 		std::cout.width(4);
-		std::cout << rounding_to_2_decimal_places(vector[i]) << " ";
+		std::cout << vector[i] << " ";
 	}
 	std::cout << '\n';
 }
@@ -22,7 +13,7 @@ void print_2d_vector(std::vector<std::vector<double>> vector) {
 	for (unsigned int i = 0; i < vector.size(); i++) {
 		for (unsigned int j = 0; j < vector.size(); j++) {
 			std::cout.width(4);
-			std::cout << rounding_to_2_decimal_places(vector[i][j]) << " ";
+			std::cout << vector[i][j] << " ";
 		}
 		std::cout << '\n';
 	}
@@ -31,11 +22,11 @@ void print_2d_vector(std::vector<std::vector<double>> vector) {
 void print_2d_vector_and_free_members(std::vector<std::vector<double>> vector, std::vector<double> free_members) {
 	for (unsigned int i = 0; i < vector.size(); i++) {
 		for (unsigned int j = 0; j < vector.size(); j++) {
-			std::cout.width(4);
-			std::cout << rounding_to_2_decimal_places(vector[i][j]) << " ";
+			std::cout.width(6);
+			std::cout << vector[i][j] << " ";
 		}
 		std::cout.width(4);
-		std::cout << "| " << rounding_to_2_decimal_places(free_members[i]) <<  '\n';
+		std::cout << "| " << free_members[i] <<  '\n';
 	}
 }
 
@@ -48,8 +39,8 @@ void enter_coefficients(std::vector<std::vector<double>>& vector) {
 }
 
 double determinant_of_a_matrix(std::vector<std::vector<double>> matrix, int matrix_size) {
-	if (matrix_size == 2) {
-		return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+	if (matrix_size == 1) {
+		return matrix[0][0];
 	}
 	else {
 		double determinant = 0;
@@ -66,20 +57,17 @@ double determinant_of_a_matrix(std::vector<std::vector<double>> matrix, int matr
 			int sign;
 			if (i % 2 == 0) { sign = 1; }
 			else { sign = -1; }
-			determinant += + matrix[0][i] * determinant_of_a_matrix(tmp_matrix, matrix_size - 1) * sign;
+			determinant += matrix[0][i] * determinant_of_a_matrix(tmp_matrix, matrix_size - 1) * sign;
 		}
 		return determinant;
 	}
 }
 
 std::vector<std::vector<double>> matrix_of_minors(std::vector<std::vector<double>> matrix, int matrix_size) {
-	std::vector<std::vector<double>> minors(matrix.size(), std::vector<double>(matrix.size()));
+	std::vector<std::vector<double>> minors(matrix_size, std::vector<double>(matrix_size));
 
-	if (matrix.size() == 2) {
-		minors[0][0] = matrix[1][1];
-		minors[0][1] = matrix[1][0];
-		minors[1][0] = matrix[0][1];
-		minors[1][1] = matrix[0][0];
+	if (matrix_size == 1) {
+		minors[0][0] = matrix[0][0];;
 		return minors;
 	}
 	else {
@@ -101,12 +89,11 @@ std::vector<std::vector<double>> matrix_of_minors(std::vector<std::vector<double
 }
 
 void algebraic_complements(std::vector<std::vector<double>>& matrix, int matrix_size) {
-	int swth;
 	for (int i = 0; i < matrix_size; i++) {
-		if (i % 2 == 0) { swth = 0; }
-		else { swth = 1; }
 		for (int j = 0; j < matrix_size; j++) {
-			if ((j + swth) % 2 == 1) { matrix[i][j] *= -1; }
+			if ((i + j) % 2 == 1) {
+				matrix[i][j] *= -1;
+			}
 		}
 	}
 }
@@ -127,7 +114,7 @@ void transposed_matrix(std::vector<std::vector<double>>& matrix, int matrix_size
 	}
 }
 
-std::vector<double> multiplication_matrix(std::vector<std::vector<double>> tr_matrix_alg_comp, std::vector<double> free_members, int determinant, int matrix_size) {
+std::vector<double> multiplication_matrix(std::vector<std::vector<double>> tr_matrix_alg_comp, std::vector<double> free_members, double determinant, int matrix_size) {
 	std::vector<double> tmp_matrix(matrix_size);
 
 	for (int i = 0; i < matrix_size; i++) {
@@ -136,6 +123,7 @@ std::vector<double> multiplication_matrix(std::vector<std::vector<double>> tr_ma
 			tmp_number += tr_matrix_alg_comp[i][j] * free_members[j];
 		}
 		tmp_matrix[i] = tmp_number/determinant;
+		std::cout << tmp_number << '\t';
 	}
 
 	return tmp_matrix;
@@ -151,7 +139,7 @@ int main() {
 	enter_coefficients(coefficients_matrix);
 
 	std::vector<double> free_members(matrix_size);
-	std::cout << "Enter the matrix of the free members: ";
+	std::cout << "Enter the matrix of the free members: \n";
 	for (int i = 0; i < matrix_size; i++) {
 		std::cin >> free_members[i];
 	}
