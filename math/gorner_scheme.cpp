@@ -18,16 +18,6 @@ void print_vector(std::vector<double> vector) {
 	std::cout << '\n';
 }
 
-void print_set(std::set<double> set) {
-	std::set<double>::const_iterator it;
-	it = set.begin();
-	while (it != set.end()) {
-		std::cout << *it << " ";
-		it++;
-	}
-	std::cout << '\n';
-}
-
 void print_equation(std::vector<double> vector) {
 	unsigned int size = vector.size();
 	std::cout << vector[0] << "x^" << size - 1;
@@ -66,23 +56,25 @@ std::vector<int> divisors(int number) {
 			div.push_back(i);
 		}
 	}
+
 	return div;
 }
 
 std::set<double> many_roots(std::vector<int> m, std::vector<int> l) {
 	std::set<double> roots;
+
 	for (unsigned int i = 0; i < l.size(); i++) {
 		for (unsigned int j = 0; j < m.size(); j++) {
 			roots.insert(static_cast<double>(l[i]) / static_cast<double>(m[j]));
 			roots.insert(static_cast<double>(-l[i]) / static_cast<double>(m[j]));
 		}
 	}
+
 	return roots;
 }
 
 std::vector<double> find_root(std::vector<double> coefficients) {
 	std::vector<double> tmp_coefficients;
-	// TODO если один из коэффициентов дробь - завершить поиск корней
 	std::set<double> roots = many_roots(divisors(static_cast<int>(coefficients[0])), divisors(static_cast<int>(coefficients[coefficients.size()-1])));
 
 	std::set<double>::const_iterator it = roots.begin();
@@ -98,11 +90,10 @@ std::vector<double> find_root(std::vector<double> coefficients) {
 		}
 
 		tmp_coefficients.clear();
-		tmp_coefficients.reserve(coefficients.size());
 		it++;
 	}
 
-	tmp_coefficients.push_back(0. / 1.);
+	tmp_coefficients.push_back(0);
 	return tmp_coefficients;
 }
 
@@ -113,7 +104,7 @@ std::vector<double> horner_scheme(std::vector<double> coefficients) {
 
 	for (unsigned int i = 0; i < coefficients.size()-1; i++) {
 		new_coefficients = find_root(new_coefficients);
-		if (new_coefficients[new_coefficients.size()-1] == 0. / 1.) {
+		if (new_coefficients[new_coefficients.size()-1] == 0) {
 			irrational_root = true;
 			break;
 		}
@@ -121,9 +112,6 @@ std::vector<double> horner_scheme(std::vector<double> coefficients) {
 		new_coefficients.pop_back();
 	}
 
-	if (irrational_root) {
-		answers.push_back(0. / 1.);
-	}
 	return answers;
 }
 
