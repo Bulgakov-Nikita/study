@@ -2,135 +2,111 @@
 #include <vector>
 #include <set>
 
-void enter_coefficients(std::vector<double>& vector) {
-	for (unsigned int i = 0; i < vector.size(); i++) {
-		std::cin >> vector[i];
-	}
+void horner_scheme(std::vector<double>& answers, std::vector<double> coefficients);
+
+std::vector<double> find_root(const std::vector<double>& coefficients, double& root);
+
+void many_roots(std::set<double>& roots, const std::vector<int>& m, const std::vector<int>& l);
+
+void divisors(std::vector<int>& div, int number);
+
+void enter_coefficients(std::vector<double>& vector);
+
+void print_vector(const std::vector<double>& vector);
+
+inline int int_abs(int number);
+
+int main() {
+    int number_of_coefficients = 0;
+    std::cout << "Enter the number of coefficients of the equation: ";
+    std::cin >> number_of_coefficients;
+
+    std::vector<double> coefficients(number_of_coefficients);
+    std::cout << "Enter equation coefficients: ";
+    enter_coefficients(coefficients);
+
+
+    std::cout << "Rational roots: ";
+    std::vector<double> answers;
+    horner_scheme(answers, coefficients);
+    print_vector(answers);
+
+    system("pause>nul");
+    return 0;
 }
 
-void print_vector(std::vector<double> vector) {
-	std::vector<double>::const_iterator it;
-	it = vector.begin();
-	while (it != vector.end()) {
-		std::cout << *it << " ";
-		it++;
-	}
-	std::cout << '\n';
+void horner_scheme(std::vector<double>& answers, std::vector<double> coefficients) {
+    int coefficients_size = coefficients.size();
+    for (unsigned int i = 0; i < coefficients_size-1; i++) {
+        double root;
+        coefficients = find_root(coefficients, root);
+        if (root == 0) {
+            break;
+        }
+        answers.push_back(root);
+    }
 }
 
-void print_equation(std::vector<double> vector) {
-	unsigned int size = vector.size();
-	std::cout << vector[0] << "x^" << size - 1;
-	for (unsigned int i = 1; i < size -1; i++) {
-		if (vector[i] < 0) {
-			std::cout << vector[i] << "x^" << size - i - 1;
-		}
-		else if (vector[i] > 0) {
-			std::cout << "+" << vector[i] << "x^" << size - i - 1;
-		}
-	}
-	if (vector[size - 1] < 0) {
-		std::cout << vector[size - 1] << "=0";
-	}
-	else {
-		std::cout << "+" << vector[size - 1] << "=0";
-	}
-	std::cout << std::endl;
+std::vector<double> find_root(const std::vector<double>& coefficients, double& root) {
+    std::vector<double> tmp_coefficients;
+    std::set<double> roots;
+    std::vector<int> m, l;
+    int coefficients_size = coefficients.size();
+
+    divisors(m, static_cast<int>(coefficients[0]));
+    divisors(l, static_cast<int>(coefficients[coefficients_size - 1]));
+    many_roots(roots, m, l);
+
+    for (auto maybe_root : roots) {
+        tmp_coefficients.push_back(coefficients[0]);
+        for (unsigned int i = 1; i < coefficients_size; i++) {
+            tmp_coefficients.push_back(coefficients[i] + tmp_coefficients[i-1] * maybe_root);
+        }
+
+        if (tmp_coefficients[coefficients_size - 1] == 0) {
+            root = maybe_root;
+            tmp_coefficients.pop_back();
+            return tmp_coefficients;
+        }
+        tmp_coefficients.clear();
+    }
+
+    root = 0;
+    return tmp_coefficients;
+}
+
+void many_roots(std::set<double>& roots, const std::vector<int>& m, const std::vector<int>& l) {
+    for (int i : l) {
+        for (int j : m) {
+            roots.insert(static_cast<double>(i) / static_cast<double>(j));
+            roots.insert(static_cast<double>(-i) / static_cast<double>(j));
+        }
+    }
+}
+
+void divisors(std::vector<int> &div, int number) {
+    number = int_abs(number);
+
+    for (int i = 1; i <= number; i++) {
+        if (number % i == 0) {
+            div.push_back(i);
+        }
+    }
 }
 
 int int_abs(int number) {
-	if (number < 0) {
-		return -number;
-	}
-	else {
-		return number;
-	}
+    return (number < 0) ? -number : number;
 }
 
-std::vector<int> divisors(int number) {
-	std::vector<int> div;
-	number = int_abs(number);
-
-	for (int i = 1; i <= number; i++) {
-		if (number % i == 0) {
-			div.push_back(i);
-		}
-	}
-
-	return div;
+void print_vector(const std::vector<double>& vector) {
+    for (auto i : vector) {
+        std::cout << i << ' ';
+    }
+    std::cout << std::endl;
 }
 
-std::set<double> many_roots(std::vector<int> m, std::vector<int> l) {
-	std::set<double> roots;
-
-	for (unsigned int i = 0; i < l.size(); i++) {
-		for (unsigned int j = 0; j < m.size(); j++) {
-			roots.insert(static_cast<double>(l[i]) / static_cast<double>(m[j]));
-			roots.insert(static_cast<double>(-l[i]) / static_cast<double>(m[j]));
-		}
-	}
-
-	return roots;
-}
-
-std::vector<double> find_root(std::vector<double> coefficients) {
-	std::vector<double> tmp_coefficients;
-	std::set<double> roots = many_roots(divisors(static_cast<int>(coefficients[0])), divisors(static_cast<int>(coefficients[coefficients.size()-1])));
-
-	std::set<double>::const_iterator it = roots.begin();
-	while (it != roots.end()) {
-		tmp_coefficients.push_back(coefficients[0]);
-		for (unsigned int i = 1; i < coefficients.size(); i++) {
-			tmp_coefficients.push_back(coefficients[i]+tmp_coefficients[i-1]*(*it));
-		}
-
-		if (tmp_coefficients[tmp_coefficients.size() - 1] == 0) {
-			tmp_coefficients[tmp_coefficients.size() - 1] = *it;
-			return tmp_coefficients;
-		}
-
-		tmp_coefficients.clear();
-		it++;
-	}
-
-	tmp_coefficients.push_back(0);
-	return tmp_coefficients;
-}
-
-std::vector<double> horner_scheme(std::vector<double> coefficients) {
-	std::vector<double> answers;
-	std::vector<double> new_coefficients = coefficients;
-	bool irrational_root = false;
-
-	for (unsigned int i = 0; i < coefficients.size()-1; i++) {
-		new_coefficients = find_root(new_coefficients);
-		if (new_coefficients[new_coefficients.size()-1] == 0) {
-			irrational_root = true;
-			break;
-		}
-		answers.push_back(new_coefficients[new_coefficients.size()-1]);
-		new_coefficients.pop_back();
-	}
-
-	return answers;
-}
-
-int main() {
-	int number_of_coeff = 0;
-	std::cout << "Enter the number of coefficints of the equation: ";
-	std::cin >> number_of_coeff;
-
-	std::vector<double> coefficients(number_of_coeff);
-	std::cout << "Enter equation coefficients: ";
-	enter_coefficients(coefficients);
-
-	std::cout << "Your equation: ";
-	print_equation(coefficients);
-
-	std::cout << "Rational roots: ";
-	std::vector<double> answers = horner_scheme(coefficients);
-	print_vector(answers);
-
-	system("pause>nul");
-	return 0;
+void enter_coefficients(std::vector<double> &vector) {
+    for (double & i : vector) {
+        std::cin >> i;
+    }
 }
