@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <vector>
 #include <set>
 
@@ -17,14 +18,9 @@ void print_vector(const std::vector<double>& vector);
 inline int int_abs(int number);
 
 int main() {
-    int number_of_coefficients = 0;
-    std::cout << "Enter the number of coefficients of the equation: ";
-    std::cin >> number_of_coefficients;
-
-    std::vector<double> coefficients(number_of_coefficients);
-    std::cout << "Enter equation coefficients: ";
+    std::vector<double> coefficients;
+    std::cout << "Enter equation natural coefficients and press Enter: ";
     enter_coefficients(coefficients);
-
 
     std::cout << "Rational roots: ";
     std::vector<double> answers;
@@ -106,7 +102,48 @@ void print_vector(const std::vector<double>& vector) {
 }
 
 void enter_coefficients(std::vector<double> &vector) {
-    for (double & i : vector) {
-        std::cin >> i;
+    int number = 0;
+    bool minus_flag = false;
+    std::string allowed_characters = " -+0123456789";
+
+    std::string str;
+    std::getline(std::cin, str);
+    str += ' ';
+    for (char ch : str) {
+        try {
+            bool allowed = false;
+            for (char allowed_ch : allowed_characters) {
+                if (ch == allowed_ch) {
+                    allowed = true;
+                    break;
+                }
+            }
+
+            if (!allowed) {
+                throw std::exception();
+            }
+        }
+        catch (const std::exception&) {
+            std::cout << "You entered an invalid character" << std::endl;
+            exit(0);
+        }
+
+        switch (ch) {
+            case ' ':
+                if (minus_flag) {
+                    number *= -1;
+                }
+                vector.push_back(number);
+                minus_flag = false;
+                number = 0;
+                break;
+            case '+':
+                break;
+            case '-':
+                minus_flag = true;
+                break;
+            default:
+                number = number*10 + static_cast<int>(ch - '0');
+        }
     }
 }
