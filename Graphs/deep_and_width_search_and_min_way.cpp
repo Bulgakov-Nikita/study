@@ -10,6 +10,7 @@ private:
     int edge;
 public:
     Graph() {
+        // граф представляется в виде списка смежности
         std::cin >> vertex >> edge;
 
         for (int i = 0; i < edge; i++) {
@@ -21,6 +22,7 @@ public:
     }
 
     void search_min(int start, int end) {
+        // поиск минимального пути алгоритмом Дейкстры
         std::vector<int> dist(vertex, 1000);
         std::vector<bool> used(vertex);
         dist[start] = 0;
@@ -63,7 +65,31 @@ public:
 
     }
 
+    void width_search(int index) {
+        // поиск в ширину
+        std::vector<bool> used(vertex);
+        std::queue<int> q;
+
+        std::cout << index << " ";
+
+        used[index] = true;
+        q.push(index);
+        while(!q.empty()) {
+            int element = q.front();
+            q.pop();
+            for (auto& i : graph[element]) {
+                if (!used[i]) {
+                    q.push(i);
+                    element = i;
+                    used[i] = true;
+                    std::cout << element << " ";
+                }
+            }
+        }
+    }
+
     void deep_search(int index) {
+        // поиск в глубину
         static std::vector<bool> used(vertex);
         used[index] = true;
         std::cout << index << " ";
@@ -92,7 +118,10 @@ int main() {
     Graph o;
     o.show();
     std::cout << "Deep search: ";
-    o.deep_search(2);
+    o.deep_search(0);
+
+    std::cout << "\nWidth search: ";
+    o.width_search(0);
 
     std::cout << "\nSearch a min way: ";
     o.search_min(0, 7);
