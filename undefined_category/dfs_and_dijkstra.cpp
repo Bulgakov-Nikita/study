@@ -8,9 +8,6 @@ private:
     int vertex;
     int edge;
 public:
-    int max;
-    int min;
-public:
     Graph() {
         std::cin >> vertex >> edge;
 
@@ -29,7 +26,7 @@ public:
         used[start] = true;
 
         std::priority_queue<int> q;
-        q.push(start);
+        q.push(-start);
         while (!q.empty()) {
             int v = -q.top();
             q.pop();
@@ -41,7 +38,28 @@ public:
                 }
             }
         }
-        min = dist[end];
+
+        int w = dist[end] - 1;
+        int last = end;
+        std::vector<int> way;
+
+        way.push_back(end);
+        while (w) {
+            for (auto& i : graph[last]) {
+                if (dist[i] == w){
+                    way.push_back(i);
+                    last = i;
+                    w--;
+                }
+            }
+        }
+        way.push_back(start);
+
+        std::reverse(way.begin(), way.end());
+        for (auto& i : way) {
+            std::cout << i << " ";
+        }
+        std::cout << std::endl;
     }
 
     void deep_search(int index) {
@@ -70,14 +88,19 @@ public:
 
 
 int main() {
+    int start, end;
     Graph o;
     o.show();
-    std::cout << "Deep search: ";
-    o.deep_search(2);
 
-    std::cout << "\nSearch a min way: ";
-    o.search_min(0, 7);
-    std::cout << o.min << std::endl;
+    std::cout << "Enter start point for deep search: ";
+    std::cin >> start;
+    std::cout << "Deep search: ";
+    o.deep_search(start);
+
+    std::cout << "\nEnter start and end point for find a way: ";
+    std::cin >> start >> end;
+    std::cout << "Search a min way: ";
+    o.search_min(start, end);
 
     return 0;
 }
